@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<Document
+	xmlns="urn:iso:std:iso:20022:tech:xsd:camt.053.001.02"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:iso:std:iso:20022:tech:xsd:camt.053.001.02 camt.053.001.02.xsd">
+	<BkToCstmrStmt>
+		<Stmt>
+{%- for transaction in transactions %}
+			<Ntry>
+				<Amt Ccy="{{transaction.currency}}">{{transaction.amount}}</Amt>
+				<CdtDbtInd>{{transaction.credit_or_debit}}</CdtDbtInd>
+				<Sts>BOOK</Sts>
+				<BookgDt>
+					<Dt>{{transaction.date}}</Dt>
+				</BookgDt>
+				<NtryDtls>
+					<TxDtls>
+						<RmtInf>
+							<Ustrd>{{transaction.description}}</Ustrd>
+						</RmtInf>
+						<RltdPties>
+							<Cdtr>
+								<Nm>{{transaction.name}}</Nm>
+							</Cdtr>
+						</RltdPties>
+					</TxDtls>
+				</NtryDtls>
+			</Ntry>
+{%- endfor %}
+		</Stmt>
+	</BkToCstmrStmt>
+</Document>
