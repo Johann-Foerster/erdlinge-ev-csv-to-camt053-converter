@@ -13,14 +13,30 @@ def to_transaction_model(infile):
             rows.append(row)
     for row in rows:
         dt = datetime.strptime(f"{row[DATE]} {row[TIME]}", '%d.%m.%Y %H:%M:%S')
-        transactions.append({'name': row[NAME],
-                             'date': dt.strftime('%Y-%m-%d'),
-                             'description': row[HINT] if row[HINT] else row[ARTICLE],
-                             'amount': row[NETTO][1:] if row[NETTO].startswith("-") else row[NETTO],
-                             'credit_or_debit': "CRDT" if row[DIRECTION]=="SOLL" else "DBIT",
-                             'currency': row[CURRENCY],
-                             'dt': dt
-                            })
+        new_transaction = {'name': row[NAME],
+                           'date': dt.strftime('%Y-%m-%d'),
+                           'description': row[HINT] if row[HINT] else row[ARTICLE],
+                           'amount': (row[NETTO][1:] if row[NETTO].startswith("-") else row[NETTO]).replace(',','.'),
+                           'credit_or_debit': "DBIT" if row[DIRECTION]=="Soll" else "CRDT",
+                           'currency': row[CURRENCY],
+                           'dt': dt
+                          }
+
+        # skip transactions that are directly paid by credit/debit card
+        is_paypal_transaction = True
+        for idx, transaction in enumerate(transactions):
+            if (transaction['dt'] == new_transaction['dt']) and \
+               (transaction['amount'] == new_transaction['amount']) and \
+               (transaction['credit_or_debit'] == "CRDT" if new_transaction['credit_or_debit']=="DBIT" else "DBIT"):
+                is_paypal_transaction=False
+                transactions.pop(idx)
+                break
+
+        if is_paypal_transaction:
+            transactions.append(new_transaction)
+
+    print(len(transactions))
+        
     return {'transactions': transactions}
 
 def main(argv, arc):
