@@ -4,7 +4,6 @@ from datetime import datetime
 
 DATE, TIME, NETTO, CURRENCY, DIRECTION = "Datum", "Uhrzeit", "Netto", "Währung", "Auswirkung auf Guthaben"
 NAME, HINT, ARTICLE = "Name", "Hinweis", "Artikelbezeichnung"
-
 def to_transaction_model(infile):
     rows, transactions = [], []
     with open(infile, newline='', mode='r', encoding='utf-8-sig') as f:
@@ -21,7 +20,6 @@ def to_transaction_model(infile):
                            'currency': row[CURRENCY],
                            'dt': dt
                           }
-
         # skip transactions that are directly paid by credit/debit card
         is_paypal_transaction = True
         for idx, transaction in enumerate(transactions):
@@ -31,12 +29,8 @@ def to_transaction_model(infile):
                 is_paypal_transaction=False
                 transactions.pop(idx)
                 break
-
         if is_paypal_transaction:
             transactions.append(new_transaction)
-
-    print(len(transactions))
-        
     return {'transactions': transactions}
 
 def main(argv, arc):
@@ -55,10 +49,11 @@ def main(argv, arc):
     
     out_xml = template.render(model)
     outfile = f"{os.path.dirname(infile)}/{Path(infile).stem}.xml"
-    print(f"Writing {outfile}...")
+    print(f"Writing {len(model['transactions'])} transactions to {outfile}...")
     with open(outfile, "w", encoding="utf-8") as f:
         f.write(out_xml)
     print(f"Success")
 
 if __name__ == "__main__":
     main(sys.argv, len(sys.argv))
+
