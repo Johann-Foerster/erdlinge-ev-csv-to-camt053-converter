@@ -1,11 +1,27 @@
-import os, sys, jinja2
+import os, sys, jinja2, csv
 from pathlib import Path
+from datetime import datetime
+
+DATE, TIME, NETTO, CURRENCY, DIRECTION = "Datum", "Uhrzeit", "Netto", "Währung", "Auswirkung auf Guthaben"
+NAME, HINT, ARTICLE = "Name", "Hinweis", "Artikelbezeichnung"
 
 def to_transaction_model(infile):
-    return {'transactions': [
-                {'name': 'Elizabetha', 'description':'stuff1', 'amount': '100.00', 'currency': 'EUR', 'credit_or_debit': 'CRDT', 'date': '2023-02-24'},
-                {'name': 'George', 'description':'stuff2', 'amount': '100.00', 'currency': 'EUR', 'credit_or_debit': 'DBIT', 'date': '2023-02-24'}
-            ]} # placeholder
+    rows, transactions = [], []
+    with open(infile, newline='', mode='r', encoding='utf-8-sig') as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            rows.append(row)
+    for row in rows:
+        dt = datetime.strptime(f"{row[DATE]} {row[TIME]}", '%d.%m.%Y %H:%M:%S')
+        transactions.append({'name': row[NAME],
+                             'date': dt.strftime('%Y-%m-%d'),
+                             'description': row[HINT] if row[HINT] else row[ARTICLE],
+                             'amount': row[NETTO][1:] if row[NETTO].startswith("-") else row[NETTO],
+                             'credit_or_debit': "CRDT" if row[DIRECTION]=="SOLL" else "DBIT",
+                             'currency': row[CURRENCY],
+                             'dt': dt
+                            })
+    return {'transactions': transactions}
 
 def main(argv, arc):
     if (arc != 2):
