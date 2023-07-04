@@ -10,6 +10,7 @@ def to_transaction_model(infile):
         reader = csv.DictReader(f)
         for row in reader:
             rows.append(row)
+    print(f"Read {len(rows)} transactions from {infile}.")
     for row in rows:
         dt = datetime.strptime(f"{row[DATE]} {row[TIME]}", '%d.%m.%Y %H:%M:%S')
         new_transaction = {'name': row[NAME],
@@ -31,6 +32,7 @@ def to_transaction_model(infile):
                 break
         if is_paypal_transaction:
             transactions.append(new_transaction)
+    print(f"{len(rows)-len(transactions)} transactions were directly paid by bank transfer.")
     return {'transactions': transactions}
 
 def main(argv, arc):
@@ -39,7 +41,7 @@ def main(argv, arc):
     infile = argv[1]
     if not os.path.exists(infile):
         raise Exception(f"{infile} does not exist.")
-    if not Path(infile).suffix == ".csv":
+    if not Path(infile).suffix.lower() == ".csv":
         raise Exception(f"{infile} is not a .csv")
     model = to_transaction_model(infile)
 
