@@ -42,7 +42,6 @@ demo = gr.Interface(fn=convert_to_camt_053,
                     outputs=[gr.Text(show_label=False, container=False), 
                              gr.File(file_types=['.xml'], label='camt.053.xml')],
                     allow_flagging="never",
-                    title="Erdlinge e.V. Paypal+GLS csv to camt.053.xml converter",
                     live=True)
     
 demo.queue().launch(share=False)   
