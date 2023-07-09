@@ -1,4 +1,4 @@
-import csv
+import csv, os
 from datetime import datetime
 import inspect
 
@@ -26,8 +26,8 @@ class Paypal:
         if not self.is_valid():
             return None
 
-        print(f"{self.infile} columns match Paypal .csv style.")
-        print(f"Read {len(self.rows)} Paypal transactions from {self.infile}.")
+        print(f"Input file is a Paypal .csv")
+        print(f"Read {len(self.rows)} Paypal transactions.")
 
         rows, transactions = [], []
         for row in self.rows:
@@ -53,4 +53,5 @@ class Paypal:
             if is_paypal_transaction:
                 transactions.append(new_transaction)
         print(f"{len(self.rows)-len(transactions)} transactions were directly paid by bank transfer.")
+        print(f"{len(transactions)} transactions remain.")
         return {'transactions': transactions}

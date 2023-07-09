@@ -26,8 +26,8 @@ class GLS:
         if not self.is_valid():
             return None
 
-        print(f"{self.infile} columns match GLS .csv style.")
-        print(f"Read {len(self.rows)} GLS transactions from {self.infile}.")
+        print(f"Input file is a GLS .csv")
+        print(f"Read {len(self.rows)} GLS transactions.")
 
         rows, transactions = [], []
         for row in self.rows:
