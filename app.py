@@ -21,27 +21,28 @@ template = templateEnv.get_template("camt.053.xml.j2")
 
 def convert_to_camt_053(file):
     if not file:
-        return None, ""
+        return None, None
     outfile_name = f"{Path(file.name).stem}.xml"
     with Capturing() as output:
         model = Paypal(file.name).transaction_model()
         if model == None:
             model = GLS(file.name).transaction_model()
         if model == None:
-            return None, f"ERROR: Not a valid Paypal or GLS csv:\n  {Path(file.name).stem}{Path(file.name).suffix}"
+            return f"ERROR: Not a valid Paypal or GLS csv:\n  {Path(file.name).stem}{Path(file.name).suffix}", None
     
     out_xml = template.render(model)
     outfile = f"{os.path.dirname(file.name)}/{outfile_name}"
     with open(outfile, "w", encoding="utf-8") as f:
         f.write(out_xml)
-    return outfile, '\n'.join(output)
+    return  '\n'.join(output), outfile
 
 
 demo = gr.Interface(fn=convert_to_camt_053, 
                     inputs=[gr.File(file_types=['.csv'])], 
-                    outputs=[gr.File(file_types=['.xml'], label='camt.053.xml'), 
-                             gr.Text(label='info')],
+                    outputs=[gr.Text(show_label=False, container=False), 
+                             gr.File(file_types=['.xml'], label='camt.053.xml')],
                     allow_flagging="never",
+                    title="Erdlinge e.V. Paypal+GLS csv to camt.053.xml converter",
                     live=True)
     
 demo.queue().launch(share=False)   
