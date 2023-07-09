@@ -18,9 +18,9 @@
 							<Ustrd>{{transaction.description}}</Ustrd>
 						</RmtInf>
 						<RltdPties>
-							<Cdtr>
+							<{{ 'Cdtr' if (transaction.credit_or_debit == 'DBIT') else 'Dbtr'}}>
 								<Nm>{{transaction.name}}</Nm>
-							</Cdtr>
+							<{{ '/Cdtr' if (transaction.credit_or_debit == 'DBIT') else '/Dbtr'}}>
 						</RltdPties>
 					</TxDtls>
 				</NtryDtls>
