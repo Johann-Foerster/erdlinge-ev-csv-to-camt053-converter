@@ -38,7 +38,7 @@ def convert_to_camt_053(file):
 
 
 demo = gr.Interface(fn=convert_to_camt_053, 
-                    inputs=[gr.File(file_types=['.csv'])], 
+                    inputs=[gr.File(label="Paypal or GLS .csv", file_types=['.csv'])], 
                     outputs=[gr.Text(show_label=False, container=False), 
                              gr.File(file_types=['.xml'], label='camt.053.xml')],
                     title="Erdlinge e.V. Paypal+GLS csv to camt.053.xml converter",
