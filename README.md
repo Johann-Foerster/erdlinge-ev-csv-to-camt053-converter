@@ -1,7 +1,7 @@
 ---
 title: Erdlinge e.V. Paypal+GLS csv to camt.053.xml converter
 emoji: 🛝
-colorFrom: teal
+colorFrom: blue
 colorTo: green
 sdk: gradio
 sdk_version: 3.36.1
